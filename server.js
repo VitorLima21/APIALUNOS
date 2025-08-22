@@ -7,7 +7,15 @@ app.use(express.json());
 const PORT = 3000;
 
 const ALUNOS = [
-    
+    {
+        id: 1, nome: "Vitor Lima", cor: "Azul", idade: 26
+    },
+    {
+        id: 2, nome: "João Gamer", cor: "Preto",  idade: 17
+    },
+    {
+        id: 3, nome: "Henry Sem ducha",cor: "Verde",idade: 19
+    },
 ]
 
 app.get("/", (req, res) => {
@@ -54,17 +62,17 @@ app.post("/alunos", (req, res)=>{
    
     // ALUNOS.length = 3
     // ALUNOS[2]
-
     // ALUNOS.length - 1
     // ALUNOS[2].id  = 3
     // ALUNOS[2].id  + 1
     // id = 4
-    let id = 0
-    if(ALUNOS.length > 0){
-        id =  ALUNOS[ALUNOS.length - 1].id + 1
-    }else{
-        id = 1
-    }
+    // let id = 0
+    // if(ALUNOS.length > 0){
+    //     id =  ALUNOS[ALUNOS.length - 1].id + 1
+    // }else{
+    //     id = 1
+    // }
+    const id = ALUNOS.length > 0 ? ALUNOS[ALUNOS.length - 1].id + 1 : 1
 
      const novoAluno = {
         id, nome, cor, idade
@@ -73,6 +81,20 @@ app.post("/alunos", (req, res)=>{
     console.log(novoAluno)
     ALUNOS.push(novoAluno)
     res.status(201).json({mensagem: "Aluno criado com sucesso"})
+})
+
+app.delete("/alunos/:id", (req, res)=>{
+    const id = Number(req.params.id);
+    const indice = ALUNOS.findIndex(aluno => aluno.id === id)
+
+    if( indice === -1){
+        return res.status(404).json({
+            msg: "Aluno não encontrado ou já foi deletado"
+        })
+    }
+    console.log(indice);
+    ALUNOS.splice(indice,1);
+    res.status(204).json({msg: "Deletado com sucesso"});
 })
 
 app.listen(PORT, () => {
