@@ -11,10 +11,10 @@ const ALUNOS = [
         id: 1, nome: "Vitor Lima", cor: "Azul", idade: 26
     },
     {
-        id: 2, nome: "João Gamer", cor: "Preto",  idade: 17
+        id: 2, nome: "João Gamer", cor: "Preto", idade: 17
     },
     {
-        id: 3, nome: "Henry Sem ducha",cor: "Verde",idade: 19
+        id: 3, nome: "Henry Sem ducha", cor: "Verde", idade: 19
     },
 ]
 
@@ -24,25 +24,25 @@ app.get("/", (req, res) => {
     })
 })
 
-app.get("/alunos",(req, res)=>{
+app.get("/alunos", (req, res) => {
     res.json(ALUNOS);
 })
 
-app.get("/alunos/:id", (req , res)=>{
+app.get("/alunos/:id", (req, res) => {
     const id = Number(req.params.id)
     console.log(`Valor recebido ${id}`);
-    
-    const aluno = ALUNOS.filter( (aluno) => aluno.id === id )
-    if(aluno.length > 0){
+
+    const aluno = ALUNOS.filter((aluno) => aluno.id === id)
+    if (aluno.length > 0) {
         res.status(200).json(aluno)
-    }else{
-        res.status(404).json({ msg: "Aluno não encontrado"})
-    }     
+    } else {
+        res.status(404).json({ msg: "Aluno não encontrado" })
+    }
 })
 
 app.get("/alunos/cor/:cor", (req, res) => {
     const cor = req.params.cor;
-    console.log(`Cor recebida: ${cor}`);    
+    console.log(`Cor recebida: ${cor}`);
     const alunosFiltrados = ALUNOS.filter(
         (aluno) => aluno.cor.toLowerCase() === cor.toLowerCase()
     );
@@ -53,13 +53,13 @@ app.get("/alunos/cor/:cor", (req, res) => {
     }
 });
 
-app.post("/alunos", (req, res)=>{
-    const {nome, cor, idade} = req.body;
+app.post("/alunos", (req, res) => {
+    const { nome, cor, idade } = req.body;
 
-    if(!nome || !cor || !idade){
-        return res.status(400).json({msg : "Nome cor e idade são obrigatorios"})
+    if (!nome || !cor || !idade) {
+        return res.status(400).json({ msg: "Nome cor e idade são obrigatorios" })
     }
-   
+
     // ALUNOS.length = 3
     // ALUNOS[2]
     // ALUNOS.length - 1
@@ -74,27 +74,46 @@ app.post("/alunos", (req, res)=>{
     // }
     const id = ALUNOS.length > 0 ? ALUNOS[ALUNOS.length - 1].id + 1 : 1
 
-     const novoAluno = {
+    const novoAluno = {
         id, nome, cor, idade
     }
 
     console.log(novoAluno)
     ALUNOS.push(novoAluno)
-    res.status(201).json({mensagem: "Aluno criado com sucesso"})
+    res.status(201).json({ mensagem: "Aluno criado com sucesso" })
 })
 
-app.delete("/alunos/:id", (req, res)=>{
+app.delete("/alunos/:id", (req, res) => {
     const id = Number(req.params.id);
     const indice = ALUNOS.findIndex(aluno => aluno.id === id)
 
-    if( indice === -1){
+    if (indice === -1) {
         return res.status(404).json({
             msg: "Aluno não encontrado ou já foi deletado"
         })
     }
     console.log(indice);
-    ALUNOS.splice(indice,1);
-    res.status(204).json({msg: "Deletado com sucesso"});
+    ALUNOS.splice(indice, 1);
+    res.status(200).json({ msg: "Deletado com sucesso" });
+})
+
+app.put("/alunos/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const { nome, cor, idade } = req.body;
+    
+    const indice = ALUNOS.findIndex(aluno => aluno.id === id)
+
+    if(indice === -1 ){
+        return res.status(404).json({msg: "Aluno não encontrado"})
+    }
+
+    if(!nome || !cor || !idade){
+        return res.status(400).json({msg: "Nome, cor e idade são obrigatorios"})
+    }
+    ALUNOS[indice] = {id , nome, cor, idade}
+    
+    res.status(200).json({msg: "Aluno atualizado com sucesso"})
+
 })
 
 app.listen(PORT, () => {
